@@ -15,7 +15,8 @@
     "lint-fix": "eslint src/ts -c src/config/.eslintrc.json --ext .ts --fix",
     "rebuild": "npm run clean && npm run build",
     "webpack": "webpack --config src/config/webpack.config.js",
-    "webpack-watch": "webpack --config src/config/webpack.config.js --watch"
+    "webpack-watch": "webpack --config src/config/webpack.config.js --watch",
+    "postinstall": "patch-package"
   },
   "engines": {
     "node": ">=18.16.0"
@@ -29,6 +30,7 @@
     "eslint": "^8.42.0",
     "fs-extra": "^11.1.1",
     "http-server": "^14.1.1",
+    "patch-package": "^8.0.1",
     "shx": "^0.3.4",
     "totp-generator": "^0.0.14",
     "ts-loader": "^9.4.3",

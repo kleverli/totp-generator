@@ -1,0 +1,25 @@
+diff --git a/node_modules/webpage-templates/build/script/custom-ejs.js b/node_modules/webpage-templates/build/script/custom-ejs.js
+index 29bc9a8..afc6208 100644
+--- a/node_modules/webpage-templates/build/script/custom-ejs.js
++++ b/node_modules/webpage-templates/build/script/custom-ejs.js
+@@ -18,7 +18,7 @@ exports.clearLoadedComponents = clearLoadedComponents;
+ function resolvePartialPath(name) {
+     /* Custom components */
+     if (path.extname(name) === "") {
+-        return path.posix.join(COMPONENTS_DIR_ABSOLUTE, name, "template.ejs").replace(/\\/g, "/");
++        return path.posix.join("node_modules/webpage-templates/app/components", name, "template.ejs").replace(/\\/g, "/");
+     }
+     return name;
+ }
+@@ -57,10 +57,6 @@ function loadComponent(componentName) {
+ }
+ exports.loadComponent = loadComponent;
+ function render(ejsStr, data) {
+-    /* Need to provide a fake file name for Windows because of a bug in EJS. */
+-    if (process.platform === "win32") {
+-        return ejs.render(ejsStr, data, { filename: "FAKE" });
+-    }
+-    return ejs.render(ejsStr, data);
++    return ejs.render(ejsStr, data, { filename: path.resolve(process.cwd(), "DUMMY.ejs") });
+ }
+ exports.render = render;
