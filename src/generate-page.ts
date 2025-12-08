@@ -7,8 +7,8 @@ const data = {
     title: "Online TOTP generator",
     description: "Tool to generate TOTP codes online",
     introduction: [
-        "This is an online tool to generate TOTP codes like an app such as Google Authenticator would do.",
-        "You can bookmark this page to remember the secret. Keep in mind that it is safer to use a dedicated app.",
+        `<span data-translate="introduction1">This is an online tool to generate TOTP codes like an app such as Google Authenticator would do.</span>`,
+        `<span data-translate="introduction2">You can bookmark this page to remember the secret. Keep in mind that it is safer to use a dedicated app.</span>`,
     ],
     githubProjectName: "totp-generator",
     readme: {
@@ -21,7 +21,8 @@ const data = {
         "script/main.min.js"
     ],
     styleFiles: [
-        "css/demo.css"
+        "css/demo.css",
+        "https://fonts.googleapis.com/css2?family=Noto+Sans+SC&display=swap"
     ],
     body:
         `<div id="error-messages">
@@ -31,21 +32,28 @@ const data = {
 <div class="section">
     <div class="section-contents">
         <div class="block">
+            <div class="language-selector">
+                <label for="language" data-translate="languageLabel">Language:</label>
+                <select id="language">
+                    <option value="en">English</option>
+                    <option value="zh">中文</option>
+                </select>
+            </div>
             <div class="controls-block">
                 <div class="controls-block-item">
-                <div class="control-label">Secret</div>
+                <div class="control-label" data-translate="secretLabel">Secret</div>
                 <div class="control-container"><input type="text" placeholder="HVR4CFHAFOWFGGFAGSA5JVTIMMPG6GMT" value="HVR4CFHAFOWFGGFAGSA5JVTIMMPG6GMT" id="secret" pattern="[a-zA-Z2-7=]+"></input></div>
             </div>
             <div class="controls-block-item">
-                <div class="control-label">Digits</div>
+                <div class="control-label" data-translate="digitsLabel">Digits</div>
                 <div class="control-container"><input type="number" min="3" max="9" value="6" id="digits" placeholder="6"></input></div>
             </div>
             <div class="controls-block-item">
-                <div class="control-label">Period</div>
-                <div class="control-container"><input type="number" min="1" max="360" value="30" id="period"  placeholder="30"></input><span style="margin-left:.5em">seconds</span></div>
+                <div class="control-label" data-translate="periodLabel">Period</div>
+                <div class="control-container"><input type="number" min="1" max="360" value="30" id="period"  placeholder="30"></input><span style="margin-left:.5em" data-translate="periodSeconds">seconds</span></div>
             </div>
                 <div class="controls-block-item">
-                    <div class="control-label">Algorithm</div>
+                    <div class="control-label" data-translate="algorithmLabel">Algorithm</div>
                     <div class="control-container">
                     <select id="algorithm">
                         <option value= "SHA-1" selected>SHA-1</option>
@@ -65,7 +73,7 @@ const data = {
         <div class="block results-container">
             <div id="generated-code-container">
                 <span id="generated-code">012345</span>
-                <button id="copy-generated-code">Copy</button>
+                <button id="copy-generated-code" data-translate="copyButton">Copy</button>
             </div>
             <div class="countdown-section">
                 <div id="seconds-left"></div>
@@ -76,7 +84,7 @@ const data = {
         </div>
         <div class="block qrcode-container">
             <canvas id="qrcode" width="300" height="300"></canvas>
-            <div id="qrcode-warnings">⚠ haha hihi</div>
+            <div id="qrcode-warnings"></div>
         </div>
     </div>
 </div>`,

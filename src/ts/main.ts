@@ -1,4 +1,5 @@
 import getToken from "totp-generator";
+import { translations } from "./translations";
 
 type TotpAlgorithm =
     | 'SHA-1'
@@ -39,6 +40,7 @@ function main(): void {
     const digitsInput = document.querySelector<HTMLInputElement>("input#digits")!;
     const periodInput = document.querySelector<HTMLInputElement>("input#period")!;
     const algorithmSelect = document.querySelector<HTMLSelectElement>("select#algorithm")!;
+    const languageSelect = document.querySelector<HTMLSelectElement>("select#language")!;
 
     const generatedCodeSpan = document.getElementById("generated-code")!;
     const copyGeneratedCodeButton = document.querySelector<HTMLButtonElement>("button#copy-generated-code")!;
@@ -49,10 +51,37 @@ function main(): void {
     const qrCodeCanvas = document.querySelector<HTMLCanvasElement>("canvas#qrcode")!;
     const qrCodeWarnings = document.getElementById("qrcode-warnings")!;
 
+    let currentLanguage = "en";
+
     const secretUrlParameter = "secret";
     const digitsUrlParameter = "digits";
     const periodUrlParameter = "period";
     const algorithmUrlParameter = "algorithm";
+
+    function getTranslation(key: string, replacements: { [key: string]: string | number } = {}): string {
+        let translation = translations[currentLanguage][key] || translations["en"][key];
+        for (const placeholder in replacements) {
+            translation = translation.replace(`{${placeholder}}`, String(replacements[placeholder]));
+        }
+        return translation;
+    }
+
+    function setLanguage(language: string): void {
+        currentLanguage = language;
+        document.documentElement.lang = language;
+        document.title = getTranslation("title");
+        document.querySelector('meta[name="description"]')?.setAttribute("content", getTranslation("description"));
+
+        document.querySelectorAll("[data-translate]").forEach(element => {
+            const key = element.getAttribute("data-translate");
+            if (key) {
+                element.textContent = getTranslation(key);
+            }
+        });
+
+        updateResult();
+        updateQrCode();
+    }
 
     function loadUrlParameters(): void {
         const parameters = new URLSearchParams(window.location.search);
@@ -122,13 +151,13 @@ function main(): void {
 
             const secondsSinceEpoch = Math.ceil(Date.now() / 1000) - 1;
             const secondsLeft = period - (secondsSinceEpoch % period);
-            secondsLeftSpan.textContent = `This code will expire in ${secondsLeft} seconds.`;
+            secondsLeftSpan.textContent = getTranslation("expireMessage", { secondsLeft });
             countdownProgress.value = 100 * secondsLeft / period;
             countdownProgress.style.display = "";
             copyGeneratedCodeButton.style.display = "";
 
         } else {
-            generatedCodeSpan.textContent = "Invalid input.";
+            generatedCodeSpan.textContent = getTranslation("invalidInput");
             secondsLeftSpan.textContent = "";
             countdownProgress.style.display = "none";
             copyGeneratedCodeButton.style.display = "none";
@@ -160,13 +189,13 @@ function main(): void {
 
         const warnings: string[] = [];
         if (![6, 8].includes(digits)) {
-            warnings.push(`Uncommon digits value "${digits}" is not supported by all authenticator apps.`);
+            warnings.push(getTranslation("uncommonDigitsWarning", { digits }));
         }
         if (algorithm !== "SHA1") {
-            warnings.push(`Uncommon algorithm "${algorithmRaw}" is not supported by all authenticator apps.`);
+            warnings.push(getTranslation("uncommonAlgorithmWarning", { algorithmRaw }));
         }
         if (period !== 30) {
-            warnings.push(`Uncommon period "${period}" is not supported by all authenticator apps.`);
+            warnings.push(getTranslation("uncommonPeriodWarning", { period }));
         }
 
         emptyElement(qrCodeWarnings);
@@ -216,11 +245,16 @@ function main(): void {
 
         algorithmSelect.addEventListener("change", onControlChange);
 
+        languageSelect.addEventListener("change", () => {
+            setLanguage(languageSelect.value);
+        });
+
         copyGeneratedCodeButton.addEventListener("click", copyToClipboard);
     }
 
     loadUrlParameters();
     bindEvents();
+    setLanguage(navigator.language.startsWith("zh") ? "zh" : "en");
     updateResult();
     updateQrCode();
     setInterval(updateResult, 500);
